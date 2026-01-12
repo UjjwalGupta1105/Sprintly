@@ -16,6 +16,9 @@ const inter=Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "Sprintly",
   description: "An project Management Application",
+  icons: {
+    icon: "./favicon.svg",
+  },
 };
 
 
