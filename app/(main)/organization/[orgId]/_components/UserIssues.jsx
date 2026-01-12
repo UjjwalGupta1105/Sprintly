@@ -1,0 +1,59 @@
+import IssueCard from "@/app/(main)/project/_components/IssueCard";
+import { getUserIssues } from "@/app/actions/issues";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { Suspense } from "react";
+
+const UserIssues =async ({ userId }) => {
+
+    const issues=await getUserIssues(userId)
+    // console.log("userId-:",userId)
+    if(issues.length===0){
+        return null
+    }
+
+    const assignedIssues=issues.filter(
+        (issue)=> issue.assignee.clerkUserId===userId
+    )
+
+    const reportedIssues=issues.filter(
+        (issue)=> issue.reporter.clerkUserId===userId
+    )
+
+  return (
+    <>
+      <h1 className="text-4xl font-bold gradient-title mb-4">
+        My Issues
+      </h1>
+
+      <Tabs defaultValue="assigned" className="w-full">
+        <TabsList>
+          <TabsTrigger value="assigned">Assigned to You</TabsTrigger>
+          <TabsTrigger value="reported">Reported by You</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="assigned">
+            <Suspense fallback={<div>Loading...</div>}>
+                <IssueGrid issues={assignedIssues}/>
+            </Suspense>
+        </TabsContent>
+        <TabsContent value="reported">
+          <Suspense fallback={<div>Loading...</div>}>
+            <IssueGrid issues={reportedIssues}/>
+          </Suspense>
+        </TabsContent>
+      </Tabs>
+    </>
+  );
+};
+
+function IssueGrid({issues}){
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-4 w-[96%] mx-auto">
+            {issues.map((issue)=>{
+                return <IssueCard key={issue.id} issue={issue} showStatus/>
+            })}
+        </div>
+    )
+}
+
+export default UserIssues;
