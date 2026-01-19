@@ -97,16 +97,16 @@ const SprintManagar = ({sprint,setSprint,sprints,projectId}) => {
 
   return (
     <>
-    <div className='flex justify-between items-center gap-4'>
-        <div className='w-[100%]'>
-        <Select value={sprint.id} onValueChange={handelSprintChange}>
-            <SelectTrigger className="w-full bg-slate-950">
-                <SelectValue placeholder="Select Sprint" />
+    <div className='flex flex-col md:flex-row items-left justify-between md:items-center gap-4 cursor-pointer'>
+        <div className='w-[100%] cursor-pointer' >
+        <Select value={sprint.id} onValueChange={handelSprintChange} className={`cursor-pointer`}>
+            <SelectTrigger className="w-full bg-slate-950 cursor-pointer">
+                <SelectValue placeholder="Select Sprint cursor-pointer" />
             </SelectTrigger>
             <SelectContent>
                 {sprints.map((sprint)=>{
                     return(
-                        <SelectItem key={sprint.id} value={sprint.id}>
+                        <SelectItem key={sprint.id} value={sprint.id} className={`cursor-pointer`}>
                             {sprint.name} ({format(sprint.startDate,"MMM d, yyyy")}) to {" "}
                             {format(sprint.endDate, "MMM d, yyyy")}
                         </SelectItem>
@@ -121,7 +121,7 @@ const SprintManagar = ({sprint,setSprint,sprints,projectId}) => {
         
 
         {canStart && (
-            <Button className={'bg-green-900 text-white hover:text-black w-[12%]'}
+            <Button className={'bg-green-900 text-white hover:text-black  cursor-pointer'}
             onClick={()=> handelStatusChange("ACTIVE")} disabled={loading}
             >Start Sprint</Button>
         )}

@@ -1,138 +1,159 @@
-"use client"
+"use client";
 
-import OrgSwitcher from "@/app/components/OrgSwitcher"
-import { useOrganization,useUser } from "@clerk/nextjs"
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { projectSchema } from "@/app/lib/validation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import useFetch from "@/app/hooks/use-fetch"
-import { createProject } from "@/app/actions/projects"
-import {toast} from "sonner"
-import { useRouter } from "next/navigation"
+import OrgSwitcher from "@/app/components/OrgSwitcher";
+import { useOrganization, useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { projectSchema } from "@/app/lib/validation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import useFetch from "@/app/hooks/use-fetch";
+import { createProject } from "@/app/actions/projects";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { ShieldAlert } from "lucide-react";
 
-// resolver is used to connect react-form with the ZOD
-// ZOD do the typeSafety & strictnes for the data entered in form
 const CreateProjectPage = () => {
-    const {isLoaded:isOrgLoaded,membership}=useOrganization()
-    const {isLoaded:isUserLoaded}=useUser()
-    const [isAdmin,setIsAdmin]=useState(false)
+  const { isLoaded: isOrgLoaded, membership } = useOrganization();
+  const { isLoaded: isUserLoaded } = useUser();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const router = useRouter();
 
-    const router=useRouter()
+  const {
+    data: project,
+    loading,
+    fn: createProjectFn,
+  } = useFetch(createProject);
 
-    const {
-        data:project,
-        loading,
-        error,
-        fn:createProjectFn
-    }=useFetch(createProject)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(projectSchema),
+  });
 
-    const {register, handleSubmit, formState:{errors,}}=useForm({
-        resolver:zodResolver(projectSchema),
-    })
-
-    useEffect(()=>{
-        if(isOrgLoaded && isUserLoaded && membership){
-            setIsAdmin(membership.role==="org:admin")
-        }
-    },[isOrgLoaded , isUserLoaded , membership])
-
-     useEffect(()=>{
-        if(project){
-            toast.success("Project Created Successfully")
-            router.push(`/project/${project.id}`)
-        }
-    },[loading])
-
-      const onSubmit = async(data) => {
-        await createProjectFn(data)
+  useEffect(() => {
+    if (isOrgLoaded && isUserLoaded && membership) {
+      setIsAdmin(membership.role === "org:admin");
     }
+  }, [isOrgLoaded, isUserLoaded, membership]);
 
-    if(!isOrgLoaded || !isUserLoaded){
-        return null
+  useEffect(() => {
+    if (project) {
+      toast.success("Project created successfully");
+      router.push(`/project/${project.id}`);
     }
+  }, [project, router]);
 
-    if(!isAdmin){
-        return(
-            <div className="min-h-screen flex flex-col gap-2 items-center">
-                <span className="text-2xl gradient-title">
-                    Oops ! Only Admins can create projects.
-                </span>
+  const onSubmit = async (data) => {
+    await createProjectFn(data);
+  };
+
+  if (!isOrgLoaded || !isUserLoaded) return null;
+
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <Card className="max-w-md w-full bg-white/5 border border-white/10 backdrop-blur">
+          <CardContent className="py-10 text-center space-y-4">
+            <div className="mx-auto w-12 h-12 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400">
+              <ShieldAlert size={26} />
             </div>
-        )
-    }
-
-    // const {
-    //     data:project,
-    //     loading,
-    //     error,
-    //     fn:createProjectFn
-    // }=useFetch(createProject)
-
-    // useEffect(()=>{
-    //     if(project){
-    //         toast.success("Project Created Successfully")
-    //         router.push(`/projects/${project.id}`)
-    //     }
-    // },[loading])
-
-
-
+            <h2 className="text-xl font-semibold text-white">
+              Admin Access Required
+            </h2>
+            <p className="text-sm text-gray-400">
+              Only organization admins can create new projects.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen mx-auto py-7 w-[92%]">
-        <h1 className="text-6xl text-center font-bold mb-8 gradient-title">
-            Create new Project
-        </h1>
+    <div className="mb-30 flex items-center justify-center px-6 py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-xl"
+      >
+        <Card className="bg-white/5 border border-white/10 backdrop-blur">
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-3xl font-bold text-white">
+              Create New Project
+            </CardTitle>
+            <CardDescription className="text-gray-400">
+              Set up a new workspace to plan, track, and deliver work efficiently.
+            </CardDescription>
+          </CardHeader>
 
-        <form className="flex flex-col space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <div>
+          <CardContent>
+            <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+              {/* Project Name */}
+              <div>
                 <Input
-                id="name"
-                className="bg-slate-950"
-                placeholder="Project Name"
-                {...register("name")}            
+                  placeholder="Project name"
+                  className="bg-slate-950"
+                  {...register("name")}
                 />
                 {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.name.message}
+                  </p>
                 )}
-            </div>
-             <div>
+              </div>
+
+              {/* Project Key */}
+              <div>
                 <Input
-                id="key"
-                className="bg-slate-950"
-                placeholder="Project Key (Ex: RCYT)"
-                {...register("key")}            
+                  placeholder="Project key (e.g. SPT)"
+                  className="bg-slate-950 uppercase"
+                  {...register("key")}
                 />
                 {errors.key && (
-                    <p className="text-red-500 text-sm mt-1">{errors.key.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.key.message}
+                  </p>
                 )}
-            </div>
-             <div>
+              </div>
+
+              {/* Description */}
+              <div>
                 <Textarea
-                id="description"
-                className="bg-slate-950"
-                placeholder="Project Descriptione"
-                {...register("description")}            
+                  placeholder="Brief description of your project"
+                  className="bg-slate-950 min-h-[110px]"
+                  {...register("description")}
                 />
                 {errors.description && (
-                    <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.description.message}
+                  </p>
                 )}
-            </div>
+              </div>
 
-            <Button disabled={loading} type="submit" size="lg" className={`bg-blue-500 text-white`}>
-                {loading ? "Creating...":"Create Project"}
-            </Button>
-            {errors && (
-                    <p className="text-red-500 text-sm mt-2">{errors.message}</p>
-                )}
-        </form>
-
+              {/* Submit */}
+              <Button
+                type="submit"
+                size="lg"
+                disabled={loading}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
+              >
+                {loading ? "Creating project..." : "Create Project"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateProjectPage
+export default CreateProjectPage;

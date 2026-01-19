@@ -71,11 +71,11 @@ const SprintCreation = ({
 
   return (
     <div>
-        <div className='flex justify-between'>
+        <div className='flex flex-col md:flex-row justify-between w-full'>
                 <h1 className='text-5xl font-bold mb-8 gradient-title'>
                     {projectTitle}
                 </h1>
-                <Button className="mt-2 cursor-pointer" 
+                <Button className="md:mt-2 mb-5 md:mb-0 cursor-pointer" 
                     onClick={()=>setShowForm(!showForm)}
                     variant={showForm ? "destructive":"default" }>
 
@@ -90,7 +90,7 @@ const SprintCreation = ({
     {showForm && (
         <Card className={'pt-4 mb-4'}>
             <CardContent className="flex gap-4 items-end">
-                <form className='flex gap-4 items-end' onSubmit={handleSubmit(onSubmit)}>
+                <form className='flex flex-col md:flex-row gap-4 md:items-end' onSubmit={handleSubmit(onSubmit)}>
                     <div>
                       <label htmlFor="name" className='block text-sm font-medium mb-1'>
                         Sprint Name

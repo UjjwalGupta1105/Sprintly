@@ -1,10 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const UserAvatar = ({user}) => {
+  console.log("got this",user)
   return (
     <div className="flex items-center space-x-2 w-full">
         <Avatar className={'h-6 w-6'}>
-            <AvatarImage src={user?.imageUrl}  alt={user?.name}/>
+            <AvatarImage src={user.imageUrl}  alt={user.name}/>
             <AvatarFallback className={"capitalize"}>
                 {user? user.name:"?"}
             </AvatarFallback>

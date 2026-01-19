@@ -1,3 +1,5 @@
+"use client"
+
 import { SignedIn,SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link';
 import { Button } from './ui/button';
@@ -6,11 +8,10 @@ import UserButton_ from './UserButton_';
 import Loading from './Loading';
 // import { checkUser } from '@/lib/checkUser';
 
-const Header = async() => {
-  // await checkUser()
+const Header = () => {
   return (
     <>
-        <div className='flex justify-between p-4'>
+        <div className='flex justify-between pt-2 lg:p-4'>
           <nav className='flex justify-between py-4 px-7 w-[92%]'>
             <div> 
            <Link href="/">
@@ -22,7 +23,7 @@ const Header = async() => {
             
            </Link>   
           </div>
-          <div>
+          <div className='hidden md:block'>
               <Link href="/project/create" >
                 <Button variant='destructive' className=" cursor-pointer w-[160] flex items-center gap-2 relative h-[40px]">
                   <PenBox size={1} width={8} className='m-0 p-0 absolute right-9 svg'/>
@@ -38,16 +39,28 @@ const Header = async() => {
             </SignedOut>
 
             <SignedIn  >
-                <UserButton_
+              <div className="scale-[1.4] mt-2 lg:mr-2 ">
+                  <UserButton_
                   appearance={{
                     elements: {
+                      userButtonTrigger: {
+                        width: "72px",
+                        height: "72px",
+                      },
                       userButtonAvatarBox: {
-                        width: "64px",
-                        height: "64px",
+                        width: "72px",
+                        height: "72px",
+                      },
+                       userButtonAvatarImage: {
+                        width: "72px",
+                        height: "72px",
                       },
                     },
                   }}
                 />
+
+              </div>
+                
             </SignedIn>
 
             <Loading/>

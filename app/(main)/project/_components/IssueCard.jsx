@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from '@/components/ui/badge'
-import { UserAvatar } from '@clerk/nextjs'
+import UserAvatar  from './UserAvatar'
 import { formatDistanceToNow } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import IssuesDetailsDialog from './IssuesDetailsDialog'

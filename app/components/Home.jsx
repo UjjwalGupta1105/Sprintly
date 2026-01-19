@@ -7,6 +7,9 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import CompanyCarousel from "./CompanyCrousel";
+import WorkflowSection from "./WorkFlowSection";
+import { motion } from "framer-motion";
+
 
 const Home = () => {
 
@@ -30,29 +33,82 @@ const Home = () => {
             icon: BarChart,
         },
     ];
+    const container = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
 
 
   return (
     <>
-        <section className=" mx-auto text-center py-20">
-            <h1 className="text-6xl lg:text-7xl font-extrabold gradient-title pb-6 flex flex-col">Streamline Your Workflow
-            <span className="gradient-title flex mx-auto gap-3 sm:gap-4 items-center">with{" "} <span className="text-[80px] text-white">Sprintly</span></span>
-            </h1>
+       <motion.section
+            variants={container}
+            initial="hidden"
+            animate="visible"
+            className="mx-auto text-center py-20 min-w-screen"
+            >
+            <motion.h1
+                variants={item}
+                className="text-6xl lg:text-7xl font-extrabold gradient-title pb-6 flex flex-col mx-auto"
+            >
+                Streamline Your Workflow
+                <span className="gradient-title flex mx-auto gap-3 sm:gap-4 items-center">
+                with{" "}
+                <span className="text-[61px] lg:text-[80px] text-white">
+                    Sprintly
+                </span>
+                </span>
+            </motion.h1>
 
-            <div>
-                <p className="text-lg font- text-gray-300 mb-6 max-w-3xl mx-auto ">Empower your team with our intutive project management solution.</p>
+            <motion.div variants={item}>
+                <p className="text-lg text-gray-300 m-2 px-4 mb-6 max-w-3xl mx-auto">
+                Empower your team with our intuitive project management solution.
+                </p>
+            </motion.div>
+
+            <motion.div
+                variants={item}
+                className="flex justify-center items-center gap-4 flex-wrap"
+            >
                 <Link href="/onboarding">
-                    <Button size="lg" className="text-md  mt-4 w-35 text-center relative cursor-pointer">
-                        Get Started<ChevronRight size={6} width={38} className="ml-1 mt-[0.5px] absolute  left-5 svg"></ChevronRight>
-                    </Button>
+                <Button size="lg" className="text-md w-35 relative cursor-pointer">
+                    Get Started
+                    <ChevronRight
+                    size={5}
+                    width={43}
+                    className="ml-1 mt-[0.5px] absolute left-5 svg"
+                    />
+                </Button>
                 </Link>
+
                 <Link href="#features">
-                    <Button size="lg" variant="outline" className="mr-4 ml-5 px-[25px] py-[21px] text-md cursor-pointer">
-                        Learn More
-                    </Button>
+                <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-[25px] py-[21px] text-md cursor-pointer"
+                >
+                    Learn More
+                </Button>
                 </Link>
-            </div>
-        </section>
+            </motion.div>
+        </motion.section>
+
 
         <section
             id="features"
@@ -86,13 +142,15 @@ const Home = () => {
             </div>
     </section>
 
+    <WorkflowSection/>
 
-       <section  className="mx-auto text-center py-20 px-5">
+
+       <section  className="mx-auto text-center py-20 lg:px-5">
             <div>
                 <h3 className="text-3xl font-bold mb-12 text-center">
                     Trusted by Industry Leaders
                 </h3>
-                <div className="w-[94%] mx-auto px-4">
+                <div className="lg:w-[94%] mx-auto lg:px-4">
                     <CompanyCarousel/>
                 </div>
             </div>
@@ -106,7 +164,7 @@ const Home = () => {
                 <p>Join thousands of teams already using Sprintly to streamline their projects and boost productivity</p>
                  <Link href="/onboarding">
                     <Button size="lg" className="text-md  mt-10 w-44 text-center relative cursor-pointer">
-                        Start for Free<ChevronRight size={6} width={38} className="ml-1 mt-[0.5px] absolute  left-12 svg"></ChevronRight>
+                        Start for Free<ChevronRight size={5} width={43} className="ml-1 mt-[0.5px] absolute  left-12 svg"></ChevronRight>
                     </Button>
                 </Link>
             </div>

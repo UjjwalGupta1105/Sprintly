@@ -217,7 +217,16 @@ const SpringBoard = ({sprints,projectId,orgId}) => {
                         {provided.placeholder}
                         {column.key ==="TODO" &&
                         currentSprint.status !== "COMPLETED" && (
-                            <Button variant="ghost" className="w-full cursor-pointer" onClick={()=>handelAddIssue(column.key)}>
+                            <Button variant="ghost" className="
+                             w-full cursor-pointer
+                            bg-white/5
+                            backdrop-blur-md
+                            border border-white/10
+                            text-gray-300
+                            hover:bg-white/10
+                            hover:text-white
+                            transition-all mt-2
+                            " onClick={()=>handelAddIssue(column.key)}>
                                 <Plus className='mr-2 h-4 w-4'/>
                                 Create Issue
                             </Button>

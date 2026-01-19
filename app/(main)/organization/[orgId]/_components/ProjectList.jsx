@@ -31,9 +31,9 @@ const ProjectList =async({orgId}) => {
 
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 w-[94%] px-4 mx-auto'>
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-10 w-[92%] px-4 mx-auto'>
         {projects.map((project)=>{
-            return <Card key={project.id}>
+            return <Card key={project.id} className={`hover:shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-shadow duration-200 hover:cursor-pointer`}>
                         <CardHeader>
                             <CardTitle className={`flex justify-between items-center`}>
                                 {project.name}

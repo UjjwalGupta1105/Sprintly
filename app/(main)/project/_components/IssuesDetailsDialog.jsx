@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useOrganization, UserAvatar, useUser } from "@clerk/nextjs"
+import { useOrganization, useUser } from "@clerk/nextjs"
 import { ExternalLink } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import {
@@ -23,6 +23,7 @@ import { useEffect,useState } from "react"
 import useFetch from "@/app/hooks/use-fetch"
 import { deleteIssue, updateIssue } from "@/app/actions/issues"
 import { BarLoader } from "react-spinners"
+import UserAvatar from "./UserAvatar"
 
 const priorityOptions=["LOW","MEDIUM","HIGH","URGENT"]
 
@@ -34,6 +35,7 @@ const IssuesDetailsDialog = ({
     onUpdate=()=>{},
     borderCol=""
 }) => {
+    console.log(issue)
 
     const [status,setStatus]=useState(issue.status)
     const [priority,setPriority]=useState(issue.priority)
@@ -148,11 +150,13 @@ const IssuesDetailsDialog = ({
             <div className="flex justify-between">
             <div className="flex flex-col gap-2">
                 <h4 className="font-semibold">Assignee</h4>
+                {console.log("assignee",issue.assignee.clerkUserId)}
                 <UserAvatar user={issue.assignee} />
             </div>
  
             <div className="flex flex-col gap-2">
                 <h4 className="font-semibold">Reporter</h4>
+                {console.log("reporter",issue.reporter.clerkUserId)}
                 <UserAvatar user={issue.reporter} />
             </div>
             </div>
@@ -162,6 +166,7 @@ const IssuesDetailsDialog = ({
                 onClick={handelDelete}
                 disabled={deleteLoading}
                 variant="destructive"
+                className={`cursor-pointer`}
                 >
                 {deleteLoading?"Deleting...":"Delete Issue"}
                 </Button>

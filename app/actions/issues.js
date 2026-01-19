@@ -183,7 +183,7 @@ export async function getUserIssues(userid){
         where: {
             OR: [
             { assigneeId: user.id },
-            { reporterId: userId },
+            { reporterId: user.id },
             ],
             project: {
             organizationId: orgId,

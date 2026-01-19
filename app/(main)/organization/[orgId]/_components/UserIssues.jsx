@@ -1,59 +1,118 @@
+"use client";
+
 import IssueCard from "@/app/(main)/project/_components/IssueCard";
 import { getUserIssues } from "@/app/actions/issues";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { Suspense } from "react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { motion } from "framer-motion";
+import React, { Suspense, useEffect, useState } from "react";
 
-const UserIssues =async ({ userId }) => {
+const UserIssues = ({ userId }) => {
+  const [issues, setIssues] = useState([]);
 
-    const issues=await getUserIssues(userId)
-    // console.log("userId-:",userId)
-    if(issues.length===0){
-        return null
-    }
+  useEffect(() => {
+    const fetchIssues = async () => {
+      const data = await getUserIssues(userId);
+      setIssues(data || []);
+    };
+    fetchIssues();
+  }, [userId]);
 
-    const assignedIssues=issues.filter(
-        (issue)=> issue.assignee.clerkUserId===userId
-    )
+  if (!issues.length) return null;
 
-    const reportedIssues=issues.filter(
-        (issue)=> issue.reporter.clerkUserId===userId
-    )
+  const assignedIssues = issues.filter(
+    (issue) => issue.assignee?.clerkUserId === userId
+  );
+
+  const reportedIssues = issues.filter(
+    (issue) => issue.reporter?.clerkUserId === userId
+  );
 
   return (
-    <>
-      <h1 className="text-4xl font-bold gradient-title mb-4">
-        My Issues
-      </h1>
+    <div className="w-full mt-20">
+      {/* SECTION HEADER */}
+      <div className="mb-6">
+        <h2 className="text-4xl font-bold gradient-title">
+          My Issues
+        </h2>
+        <p className="text-gray-400 mt-1">
+          Track issues assigned to you and reported by you
+        </p>
+      </div>
 
       <Tabs defaultValue="assigned" className="w-full">
-        <TabsList>
-          <TabsTrigger value="assigned">Assigned to You</TabsTrigger>
-          <TabsTrigger value="reported">Reported by You</TabsTrigger>
+        <TabsList className="mb-6 bg-white/5 border border-white/10">
+          <TabsTrigger value="assigned">
+            Assigned to Me ({assignedIssues.length})
+          </TabsTrigger>
+          <TabsTrigger value="reported">
+            Reported by Me ({reportedIssues.length})
+          </TabsTrigger>
         </TabsList>
 
+        {/* ASSIGNED */}
         <TabsContent value="assigned">
-            <Suspense fallback={<div>Loading...</div>}>
-                <IssueGrid issues={assignedIssues}/>
-            </Suspense>
+          <Suspense fallback={<IssuesSkeleton />}>
+            <IssueGrid issues={assignedIssues} />
+          </Suspense>
         </TabsContent>
+
+        {/* REPORTED */}
         <TabsContent value="reported">
-          <Suspense fallback={<div>Loading...</div>}>
-            <IssueGrid issues={reportedIssues}/>
+          <Suspense fallback={<IssuesSkeleton />}>
+            <IssueGrid issues={reportedIssues} />
           </Suspense>
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   );
 };
 
-function IssueGrid({issues}){
+export default UserIssues;
+
+function IssueGrid({ issues }) {
+  if (!issues.length) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-4 w-[96%] mx-auto">
-            {issues.map((issue)=>{
-                return <IssueCard key={issue.id} issue={issue} showStatus/>
-            })}
-        </div>
-    )
+      <div className="text-gray-400 bg-white/5 border border-white/10 rounded-xl p-6">
+        No issues found.
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+    >
+      {issues.map((issue, i) => (
+        <motion.div
+          key={issue.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.05 }}
+        >
+          <IssueCard issue={issue} showStatus />
+        </motion.div>
+      ))}
+    </motion.div>
+  );
 }
 
-export default UserIssues;
+function IssuesSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-40 rounded-xl bg-white/5 border border-white/10 animate-pulse"
+        />
+      ))}
+    </div>
+  );
+}

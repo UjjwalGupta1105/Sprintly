@@ -1,28 +1,43 @@
 "use client"
 
-import { OrganizationList, useOrganization } from '@clerk/nextjs'
-import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import { OrganizationList, useOrganization } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
+import React, { useEffect, useState } from "react"
 
 const OnboardingPage = () => {
-  const  {organization}=useOrganization()
-  const router=useRouter()
+  const { organization } = useOrganization()
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
-  // useEffect(()=>{
-  //   if(organization){
-  //     router.push(`/organization/${organization.slug}`)
-  //   }
-  // },[organization])
+  useEffect(() => {
+    if (loading && organization) {
+      router.replace(`/organization/${organization.slug}`)
+    }
+  }, [loading, organization, router])
 
   return (
-    <div className=' min-h-screen flex justify-center pt-14'>
-      <OrganizationList
-       hidePersonal 
-       afterSelectOrganizationUrl={`/organization/${organization.slug}`}
-      //  afterSelectOrganizationUrl="/organization/:slug"
-       afterCreateOrganizationUrl="/organization/:slug"
-      />
-    </div>
+    <>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 text-white">
+          Loading organization…
+        </div>
+      )}
+
+      <div
+        className="mt-10 lg:mt-0 min-h-screen flex justify-center pt-14"
+        onClickCapture={(e) => {
+          if (e.target.closest("button")) {
+            setLoading(true)
+          }
+        }}
+      >
+        <OrganizationList
+          hidePersonal
+          afterSelectOrganizationUrl={undefined}
+          afterCreateOrganizationUrl="/organization/:slug"
+        />
+      </div>
+    </>
   )
 }
 
