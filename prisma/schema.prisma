@@ -8,108 +8,148 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id              String   @id @default(cuid())
-  clerkUserId     String   @unique
-  email           String   @unique
+  id          String  @id @default(cuid())
+  clerkUserId String  @unique
+  email       String  @unique
   // Below two are not mandatory-:
-  name            String?  
-  imageUrl        String?
+  name        String?
+  imageUrl    String?
 
-  createdIssues   Issue[]  @relation("Reporter")
-  assignedIssues  Issue[]  @relation("Assignee")
+  createdIssues  Issue[] @relation("Reporter")
+  assignedIssues Issue[] @relation("Assignee")
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  comments   IssueComment[]
+  activities IssueActivity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-
 model Project {
-  id              String   @id @default(cuid())
-  name            String
-  key             String
-  description     String?
-  organizationId  String   // This will store the Clerk organization ID
+  id             String  @id @default(cuid())
+  name           String
+  key            String
+  description    String?
+  organizationId String // This will store the Clerk organization ID
 
-  sprints         Sprint[]
-  issues          Issue[]
+  sprints Sprint[]
+  issues  Issue[]
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([organizationId, key])
 }
 
 model Sprint {
-  id          String        @id @default(cuid())
-  name        String       
-  startDate   DateTime
-  endDate     DateTime
-  status      SprintStatus  @default(PLANNED)
+  id        String       @id @default(cuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  status    SprintStatus @default(PLANNED)
 
-  projectId   String
+  projectId String
   // Realtion through foreign keys
-  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  issues      Issue[]
+  issues Issue[]
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-   @@unique([name, projectId])
+  @@unique([name, projectId])
 }
 
 model Issue {
-  id          String        @id @default(cuid())
+  id          String  @id @default(cuid())
   title       String
   description String?
 
-  status      IssueStatus
-  order       Int           // Order within the same status column
-  priority    IssuePriority
+  status   IssueStatus
+  order    Int // Order within the same status column
+  priority IssuePriority
 
-  assigneeId  String?
-  assignee    User?         @relation("Assignee", fields: [assigneeId], references: [id])
+  assigneeId String?
+  assignee   User?   @relation("Assignee", fields: [assigneeId], references: [id])
 
-  reporterId  String
-  reporter    User          @relation("Reporter", fields: [reporterId], references: [id])
+  reporterId String
+  reporter   User   @relation("Reporter", fields: [reporterId], references: [id])
 
-  projectId   String
-  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  sprintId    String?
-  sprint      Sprint?       @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  sprintId String?
+  sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: SetNull)
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-// The below line tells, Create a database index on the combination of status and order columns.
+  comments   IssueComment[]
+  activities IssueActivity[]
+
+  // The below line tells, Create a database index on the combination of status and order columns.
   @@index([status, order])
+}
+
+model IssueComment {
+  id      String @id @default(cuid())
+  content String
+
+  issueId String
+  issue   Issue  @relation(fields: [issueId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model IssueActivity {
+  id String @id @default(cuid())
+
+  issueId String
+  issue   Issue  @relation(fields: [issueId], references: [id], onDelete: Cascade)
+
+  actorId String
+  actor   User   @relation(fields: [actorId], references: [id])
+
+  type     ActivityType
+  oldValue String?
+  newValue String?
+
+  createdAt DateTime @default(now())
+}
+
+
+enum ActivityType {
+  CHANGED_STATUS
+  CHANGED_PRIORITY
+  CHANGED_ASSIGNEE
+  CHANGED_REPORTER
 }
 
 
 // Through enum we are restricting it to only these values-:
-enum SprintStatus{
+enum SprintStatus {
   PLANNED
   ACTIVE
   COMPLETED
 }
 
-enum IssueStatus{
+enum IssueStatus {
   TODO
   IN_PROGRESS
   IN_REVIEW
   DONE
 }
 
-enum IssuePriority{
+enum IssuePriority {
   LOW
   MEDIUM
   HIGH

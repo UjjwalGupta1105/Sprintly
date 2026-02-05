@@ -7,6 +7,8 @@ import UserIssues from "./_components/UserIssues";
 import Link from "next/link"
 import { Button } from "@/components/ui/button";
 import { PenBox } from "lucide-react";
+import { Suspense } from "react";
+// import OrgStatsSkeleton from "./_components/OrgStatsSkeleton"
 
 const OrganizationPage = async () => {
   const { userId, orgId } = await auth();
@@ -50,7 +52,10 @@ const OrganizationPage = async () => {
        
 
       {/* STATS */}
+    <Suspense >
       <OrgStats orgId={organization.id} />
+    </Suspense>
+      {/* <OrgStats orgId={organization.id} /> */}
 
       {/* PROJECTS */}
       <div className="mt-14">
@@ -58,7 +63,7 @@ const OrganizationPage = async () => {
       </div>
 
       {/* USER ISSUES */}
-      <div className="mt-16">
+      <div className="mt-16 mb-5">
         <UserIssues userId={userId} />
       </div>
     </div>

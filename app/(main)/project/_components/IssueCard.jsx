@@ -35,8 +35,8 @@ const IssueCard = ({
     onDelete(...params)
     router.refresh()
   }
-  const onUpdateHandler=(...params)=>{
-    onUpdate(...params)
+  const onUpdateHandler=async (...params)=>{
+    await onUpdate(...params)
     router.refresh()
   }
 
@@ -48,14 +48,14 @@ const IssueCard = ({
 
   return (
     <>
-       <Card className={'cursor-pointer hover:shadow-md tarnsition-shadow pt-0'}
+       <Card className={'cursor-pointer hover:shadow-md transition-shadow pt-0'}
        onClick={()=>setIsDialogOpen(true)}>
         <CardHeader className={`border-t-2 ${priorityColor[issue.priority]} rounded-lg`}>
             <CardTitle className={'mt-6'}>{issue.title}</CardTitle>
         </CardHeader>
         <CardContent className={'flex gap-2 -mt-3'}>
          {showStatus && <Badge>{issue.status}</Badge>}
-         <Badge variant="ouline" className={'-ml-1'}>
+         <Badge variant="outline" className={'-ml-1'}>
             {issue.priority}
          </Badge>
         </CardContent>
@@ -71,7 +71,7 @@ const IssueCard = ({
           onClose={()=>setIsDialogOpen(false)}
           issue={issue}
           onDelete={onDeleteHandler}
-          onUpadte={onUpdateHandler}
+          onUpdate={onUpdateHandler}
           borderCol={priorityColor[issue.priority]}
           
           />

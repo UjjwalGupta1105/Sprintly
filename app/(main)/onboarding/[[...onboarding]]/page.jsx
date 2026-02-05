@@ -25,16 +25,20 @@ const OnboardingPage = () => {
 
       <div
         className="mt-10 lg:mt-0 min-h-screen flex justify-center pt-14"
-        onClickCapture={(e) => {
-          if (e.target.closest("button")) {
-            setLoading(true)
-          }
-        }}
+        // onClickCapture={(e) => {
+        //   console.log("descrip",e.target)
+        //   if (e.target.closest("button")) {
+        //     setLoading(true)
+        //   }
+        // }}
       >
         <OrganizationList
           hidePersonal
-          afterSelectOrganizationUrl={undefined}
+          afterSelectOrganizationUrl={()=> setLoading(true)}
           afterCreateOrganizationUrl="/organization/:slug"
+          // onOrganizationSelect={() => {
+          //   setLoading(true)
+          // }}
         />
       </div>
     </>

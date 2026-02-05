@@ -22,7 +22,7 @@ const UserIssues = ({ userId }) => {
     fetchIssues();
   }, [userId]);
 
-  if (!issues.length) return null;
+  // if (!issues.length) return null;
 
   const assignedIssues = issues.filter(
     (issue) => issue.assignee?.clerkUserId === userId

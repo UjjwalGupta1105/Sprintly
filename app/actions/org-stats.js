@@ -8,73 +8,61 @@ export async function getOrgStats(organizationId) {
     activeProjects,
     completedIssues,
     pendingIssues,
-    totalUsers,
+    usersFromIssues,
   ] = await Promise.all([
-    // Total projects in organization
+    // Total projects
     db.project.count({
       where: { organizationId },
     }),
 
-    // Active projects = projects having at least one ACTIVE sprint
+    // Active projects
     db.project.count({
       where: {
         organizationId,
         sprints: {
-          some: {
-            status: "ACTIVE",
-          },
+          some: { status: "ACTIVE" },
         },
       },
     }),
 
-    // Completed issues (DONE)
+    // Completed issues
     db.issue.count({
       where: {
         status: "DONE",
-        project: {
-          organizationId,
-        },
+        project: { organizationId },
       },
     }),
 
-    // Pending issues (NOT DONE)
+    // Pending issues
     db.issue.count({
       where: {
         status: { not: "DONE" },
-        project: {
-          organizationId,
-        },
+        project: { organizationId },
       },
     }),
 
-    // Total unique users involved (reporters + assignees)
-    db.user.count({
+    // 🚀 FAST user count via issues
+    db.issue.findMany({
       where: {
-        OR: [
-          {
-            createdIssues: {
-              some: {
-                project: { organizationId },
-              },
-            },
-          },
-          {
-            assignedIssues: {
-              some: {
-                project: { organizationId },
-              },
-            },
-          },
-        ],
+        project: { organizationId },
       },
+      select: {
+        reporterId: true,
+        assigneeId: true,
+      },
+      distinct: ["reporterId", "assigneeId"],
     }),
   ]);
+
+  const uniqueUsers = new Set(
+    usersFromIssues.flatMap(i => [i.reporterId, i.assigneeId]).filter(Boolean)
+  ).size;
 
   return {
     totalProjects,
     activeProjects,
-    totalUsers,
     completedIssues,
     pendingIssues,
+    totalUsers: uniqueUsers,
   };
 }

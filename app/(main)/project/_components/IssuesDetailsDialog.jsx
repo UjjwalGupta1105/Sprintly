@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useOrganization, useUser } from "@clerk/nextjs"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Plus } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import {
   Select,
@@ -24,6 +24,8 @@ import useFetch from "@/app/hooks/use-fetch"
 import { deleteIssue, updateIssue } from "@/app/actions/issues"
 import { BarLoader } from "react-spinners"
 import UserAvatar from "./UserAvatar"
+import Link from "next/link"
+import AddCommentDialog from "./AddCommentDialog"
 
 const priorityOptions=["LOW","MEDIUM","HIGH","URGENT"]
 
@@ -39,6 +41,7 @@ const IssuesDetailsDialog = ({
 
     const [status,setStatus]=useState(issue.status)
     const [priority,setPriority]=useState(issue.priority)
+    const [commentOpen, setCommentOpen] = useState(false)
 
     const {user}=useUser()
     const {membership}=useOrganization()
@@ -60,14 +63,34 @@ const IssuesDetailsDialog = ({
     data: updated,
     } = useFetch(updateIssue);
 
-     const handelStatusChange=async(newStatus)=>{
+     const handelStatusChange = async (newStatus) => {
         setStatus(newStatus)
-        updateIssueFn(issue.id,{status:newStatus,priority})
-    } 
-    const handelPriorityChange=async(newPriority)=>{
+        const res = await updateIssueFn(issue.id, {
+            status: newStatus,
+            priority,
+        })
+
+        if (res) {
+            onUpdate(res)
+            router.refresh() 
+            window.location.reload();
+        }
+        }
+
+        const handelPriorityChange = async (newPriority) => {
         setPriority(newPriority)
-        updateIssueFn(issue.id,{status,priority:newPriority})
-    }
+        const res = await updateIssueFn(issue.id, {
+            status,
+            priority: newPriority,
+        })
+
+        if (res) {
+            onUpdate(res)
+            router.refresh() 
+            window.location.reload();
+
+        }
+        }
     const handelDelete=()=>{
         if(window.confirm("Are you sure you want to delete this Issue?")){
             deleteIssueFn(issue.id)
@@ -114,7 +137,7 @@ const IssuesDetailsDialog = ({
                 <BarLoader width={"100%"} color="#36d7b7"/>
             )}
             <div className="space-y-4">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 justify-between">
                 <Select value={status} onValueChange={handelStatusChange}>
                 <SelectTrigger className={`border ${borderCol} rounded`}>
                     <SelectValue placeholder="Status" />
@@ -126,7 +149,17 @@ const IssuesDetailsDialog = ({
                     
                 </SelectContent>
                 </Select>
-            </div>
+                <Button className={'cursor-pointer'}  onClick={()=>setCommentOpen(true)}>
+                        <Plus className=" h-4 "/>
+                        Add Comment
+                </Button>
+                </div>
+                {/* <div>
+                    <Button>
+                        <Plus className="mr-2 h-4 w-4"/>
+                        Add Comment
+                    </Button>
+                </div> */}
             <div>
                 <Select value={priority} onValueChange={handelPriorityChange} disabled={!canChange}>
                 <SelectTrigger>
@@ -160,8 +193,10 @@ const IssuesDetailsDialog = ({
                 <UserAvatar user={issue.reporter} />
             </div>
             </div>
-            
-            {canChange && (
+
+            <div className="flex justify-between mt-6">
+
+                {canChange && (
                 <Button
                 onClick={handelDelete}
                 disabled={deleteLoading}
@@ -171,6 +206,15 @@ const IssuesDetailsDialog = ({
                 {deleteLoading?"Deleting...":"Delete Issue"}
                 </Button>
             )}
+
+            <Button>
+                <Link href={`/issues/${issue.id}`}>
+                    more
+                </Link>
+            </Button>
+            </div>
+            
+            
             {(deleteError || updateError)&& (
                 <p className="text-red-500">
                     {deleteError?.message || updateError?.message}
@@ -180,6 +224,12 @@ const IssuesDetailsDialog = ({
             
         </DialogContent>
         </Dialog>
+        <AddCommentDialog
+            open={commentOpen}
+            onClose={() => setCommentOpen(false)}
+            issueId={issue.id}
+        />
+
     </div>
   )
 }
