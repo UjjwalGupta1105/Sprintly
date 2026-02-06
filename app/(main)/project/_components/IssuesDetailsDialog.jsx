@@ -42,6 +42,7 @@ const IssuesDetailsDialog = ({
     const [status,setStatus]=useState(issue.status)
     const [priority,setPriority]=useState(issue.priority)
     const [commentOpen, setCommentOpen] = useState(false)
+    const [issueLoading, setIssueLoading] = useState(false)
 
     const {user}=useUser()
     const {membership}=useOrganization()
@@ -121,6 +122,12 @@ const IssuesDetailsDialog = ({
     }
   return (
     <div>
+        {issueLoading && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 text-white text-lg font-semibold animate-pulse">
+            Loading Issue…
+        </div>
+        )}
+
         <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent>
             <DialogHeader>
@@ -207,11 +214,17 @@ const IssuesDetailsDialog = ({
                 </Button>
             )}
 
-            <Button>
-                <Link href={`/issues/${issue.id}`}>
-                    more
-                </Link>
+            <Button
+                className="cursor-pointer"
+                disabled={issueLoading}
+                onClick={() => {
+                    setIssueLoading(true)
+                    router.push(`/issues/${issue.id}`)
+                }}
+                >
+                more
             </Button>
+
             </div>
             
             

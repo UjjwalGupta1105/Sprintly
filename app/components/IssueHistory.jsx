@@ -5,7 +5,7 @@ import UserAvatar from "./userAvatar"
 
 const IssueHistory = ({ activities }) => {
   return (
-    <div className="bg-neutral-900 rounded-xl p-5 space-y-5">
+    <div className="bg-neutral-900 rounded-xl p-5 space-y-5 mb-5">
       <h2 className="text-xl font-semibold gradient-title">History</h2>
 
       {activities.map((activity, index) => (

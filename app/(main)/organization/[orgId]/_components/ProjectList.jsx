@@ -1,56 +1,27 @@
-import { getProjects } from '@/app/actions/projects'
-import Link from 'next/link'
-import React from 'react'
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import DeleteProject from './DeleteProject'
-import useFetch from '@/app/hooks/use-fetch'
+import ProjectCard from "./ProjectCard"
 
-const ProjectList =async({orgId}) => {
-    const projects=await getProjects(orgId)
+const ProjectList = async ({ orgId }) => {
+  const projects = await getProjects(orgId)
 
-    if(projects.length===0){
-        return(
-            <>
-                <h3>No Projects Found!!</h3>
-                <Link
-                 href={`/project/create`}
-                 className='underline underline-offset-2 text-blue-200'
-                >Create New</Link>
-            </>
-            
-        )
-    }
-
+  if (projects.length === 0) {
+    return (
+      <>
+        <h3>No Projects Found!!</h3>
+        <Link
+          href={`/project/create`}
+          className="underline underline-offset-2 text-blue-200"
+        >
+          Create New
+        </Link>
+      </>
+    )
+  }
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-10 w-[92%] px-4 mx-auto'>
-        {projects.map((project)=>{
-            return <Card key={project.id} className={`hover:shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-shadow duration-200 hover:cursor-pointer`}>
-                        <CardHeader>
-                            <CardTitle className={`flex justify-between items-center`}>
-                                {project.name}
-                                <DeleteProject projectId={project.id}/>
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className='text-sm text-gray-500 mb-4'>{project.description}</p>
-                            <Link
-                            href={`/project/${project.id}`}
-                            className='text-blue-500 hover:underline'
-                            >
-                                View Project
-                            </Link>
-                        </CardContent>
-                    </Card>
-        })}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-[92%] px-4 mx-auto">
+      {projects.map((project) => (
+        <ProjectCard key={project.id} project={project} />
+      ))}
     </div>
   )
 }

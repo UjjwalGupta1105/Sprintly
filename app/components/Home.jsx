@@ -65,12 +65,12 @@ const item = {
             >
             <motion.h1
                 variants={item}
-                className="text-6xl lg:text-7xl font-extrabold gradient-title pb-6 flex flex-col mx-auto"
+                className="text-5xl lg:text-7xl font-extrabold gradient-title pb-6 flex flex-col mx-auto"
             >
                 Streamline Your Workflow
                 <span className="gradient-title flex mx-auto gap-3 sm:gap-4 items-center">
                 with{" "}
-                <span className="text-[61px] lg:text-[80px] text-white">
+                <span className="text-[56px] lg:text-[80px] text-white">
                     Sprintly
                 </span>
                 </span>
