@@ -18,7 +18,7 @@ const OnboardingPage = () => {
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 text-white animate-pulse">
           Loading organization…
         </div>
       )}
