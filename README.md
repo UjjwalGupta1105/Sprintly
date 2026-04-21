@@ -12,10 +12,13 @@
 
 ---
 
-## 🌟 Screenshots
+## Screenshots
 ![Home Page](./public/Screenshot%202026-04-21%20192817.png)
+
 ![Organization Page](./public/Screenshot%202026-04-21%20193124.png)
+
 ![Sprint Page](./public/Screenshot%202026-04-21%20193225.png)
+
 ![Issue Page](./public/Screenshot%202026-04-21%20193302.png)
 
 ## Features  
