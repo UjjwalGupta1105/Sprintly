@@ -13,10 +13,10 @@
 ---
 
 ## 🌟 Screenshots
-![Home Page](./public/Screenshot 2026-04-21 192817.png)
-![Organization Page](./public/Screenshot 2026-04-21 193124.png)
-![Sprint Page](./public/Screenshot 2026-04-21 193225.png)
-![Issue Page](./public/Screenshot 2026-04-21 193302.png)
+![Home Page](./Screenshot 2026-04-21 192817.png)
+![Organization Page](./Screenshot 2026-04-21 193124.png)
+![Sprint Page](./Screenshot 2026-04-21 193225.png)
+![Issue Page](./Screenshot 2026-04-21 193302.png)
 
 ## Features  
 
